@@ -1,0 +1,97 @@
+﻿<Page
+    x:Class="App1.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:App1"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:Interactions="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Triggers="using:WindowsStateTriggers"
+    xmlns:ViewModel="using:App1.ViewModels"
+    xmlns:Model="using:App1.Models"
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <ViewModel:MainViewModel></ViewModel:MainViewModel>
+    </Page.DataContext>
+
+    <Grid x:Name="MainGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Idle">
+                    <VisualState.Setters>
+                        <Setter Target="AddElementGrid.(UIElement.Visibility)" Value="Collapsed" />
+                        <Setter Target="AddButton.(UIElement.Visibility)" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Adding">
+                    <VisualState.Setters>
+                        <Setter Target="AddElementGrid.(UIElement.Visibility)" Value="Visible" />
+                        <Setter Target="AddButton.(UIElement.Visibility)" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Interactivity:Interaction.Behaviors>
+            <Interactions:EventTriggerBehavior EventName="Loaded">
+                <Interactions:GoToStateAction StateName="Idle"/>
+            </Interactions:EventTriggerBehavior>
+        </Interactivity:Interaction.Behaviors>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <Grid x:Name="AddElementGrid" Grid.Row="0">
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Text="Firstname" Grid.Row="0" Grid.Column="0" Margin="5,10" VerticalAlignment="Center" />
+            <TextBlock Text="Lastname" Grid.Row="1" Grid.Column="0" Margin="5,10" VerticalAlignment="Center"/>
+            
+            <TextBox x:Name="firstName" Text="{x:Bind ViewModel.Firstname, Mode=TwoWay}" Grid.Row="0" Grid.Column="1" Margin="5,10"/>
+            <TextBox x:Name="lastName" Text="{x:Bind ViewModel.Lastname, Mode=TwoWay}" Grid.Row="1" Grid.Column="1" Margin="5,10"/>
+            
+            <Button x:Name="InsertButton" Click="{x:Bind ViewModel.InsertPerson}" Grid.Row="2" Content="Insert" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Margin="5,2" Padding="8,4">
+                <Interactivity:Interaction.Behaviors>
+                    <Interactions:EventTriggerBehavior EventName="Click">
+                        <Interactions:GoToStateAction StateName="Idle"/>
+                    </Interactions:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+            </Button>            
+        </Grid>
+        
+        <Button x:Name="AddButton" Content="Add" Grid.Row="1">
+            <Interactivity:Interaction.Behaviors>
+                <Interactions:EventTriggerBehavior EventName="Click">
+                    <Interactions:GoToStateAction StateName="Adding"/>
+                </Interactions:EventTriggerBehavior>
+            </Interactivity:Interaction.Behaviors>
+        </Button>
+
+        <ListView ItemsSource="{x:Bind ViewModel.Persons}" Grid.Row="2">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="Model:Person">
+                    <StackPanel>
+                        <TextBlock Text="{x:Bind Firstname}" />
+                        <TextBlock Text="{x:Bind Lastname}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>
